@@ -1,0 +1,23 @@
+{
+  "name": "2ch proxy",
+  "description": "Simple go reverse proxy for 2ch",
+  "keywords": [
+    "freedom",
+    "go",
+    "2ch",
+    "proxy"
+  ],
+  "website": "https://github.com/prof-fortran/2ch-proxy",
+  "repository": "https://github.com/prof-fortran/2ch-proxy"
+  "buildpacks": [
+    {
+      "url": "heroku/go"
+    }
+  ],
+  "env": {
+    "2CH_HOST": {
+      "description": "2ch hostname",
+      "value": "2ch.hk"
+    }
+  }
+}
