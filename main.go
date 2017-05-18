@@ -2,45 +2,41 @@ package main
 
 import (
 	"log"
-	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"os"
 )
 
-func getPortAndHostFromEnvironment() (string, string) {
+func getPortAndUrlFromEnvironment() (string, *url.URL) {
 	port := os.Getenv("PORT")
 
 	if port == "" {
 		log.Fatal("$PORT must be set")
 	}
 
-	host := os.Getenv("2CH_HOST")
+	rawUrl := os.Getenv("2CH_URL")
 
-	if host == "" {
-		log.Fatal("$HOST must be set")
+	if rawUrl == "" {
+		log.Fatal("$2CH_URL must be set")
 	}
-	return port, host
-}
+	finalUrl, err := url.Parse(rawUrl)
+	if err != nil {
+			log.Fatal(err)
+  }
 
-func sameHost(handler http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r.Host = r.URL.Host
-		handler.ServeHTTP(w, r)
-	})
+	return port, finalUrl
 }
 
 func main() {
-	port, host := getPortAndHostFromEnvironment()
+	port, proxyUrl := getPortAndUrlFromEnvironment()
 	log.Printf(
-		"Starting application on port: %s, reversing host %s\n",
+		"Starting application on port: %s, reversing url %s\n",
 		port,
-		host,
+		proxyUrl,
 	)
-	proxy := httputil.NewSingleHostReverseProxy(&url.URL{
-		Scheme: "https",
-		Host:   host,
-	})
-	singleHosted := sameHost(proxy)
-	http.ListenAndServe(":"+port, singleHosted)
+	proxyServer := &ProxyServer{
+		Port: port,
+		ProxificationHost: proxyUrl.Hostname(),
+		ProxificationScheme: proxyUrl.Scheme,
+	}
+	proxyServer.Start()
 }

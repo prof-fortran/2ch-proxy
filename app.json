@@ -8,16 +8,24 @@
     "proxy"
   ],
   "website": "https://github.com/prof-fortran/2ch-proxy",
-  "repository": "https://github.com/prof-fortran/2ch-proxy"
+  "repository": "https://github.com/prof-fortran/2ch-proxy",
   "buildpacks": [
     {
       "url": "heroku/go"
     }
   ],
   "env": {
-    "2CH_HOST": {
-      "description": "2ch hostname",
-      "value": "2ch.hk"
+    "2CH_URL": {
+      "description": "2ch url",
+      "value": "https://2ch.hk"
+    },
+    "GOVERSION": {
+      "description": "Go version",
+      "value": "go1.8.1"
+    },
+    "GO_INSTALL_PACKAGE_SPEC": {
+      "description": "Glide package spec",
+      "value": "."
     }
   }
 }
